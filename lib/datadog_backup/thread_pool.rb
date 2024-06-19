@@ -3,8 +3,8 @@
 module DatadogBackup
   module ThreadPool
     TPOOL = ::Concurrent::ThreadPoolExecutor.new(
-      min_threads: 5,
-      max_threads: 5,
+      min_threads: 2,
+      max_threads: 2,
       fallback_policy: :abort
     )
 
