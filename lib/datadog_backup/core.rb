@@ -64,6 +64,7 @@ module DatadogBackup
     end
 
     def get_by_id(id)
+      rate_limit
       except(get(id))
     end
 
@@ -71,6 +72,8 @@ module DatadogBackup
       @options = options
       @banlist = []
       ::FileUtils.mkdir_p(mydir)
+      @last_request_time = Time.now
+      @rate_limit_interval = 0.25
     end
 
     def myclass
@@ -126,6 +129,17 @@ module DatadogBackup
       else
         raise "Net::OpenTimeout: #{e.message}"
       end
+    end
+
+    private
+
+    def rate_limit
+      now = Time.now
+      elapsed = now - @last_request_time
+      if elapsed < @rate_limit_interval
+        sleep(@rate_limit_interval - elapsed)
+      end
+      @last_request_time = Time.now
     end
   end
 end
